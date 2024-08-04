@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>محول العملات</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 350px;
+        }
+        h1 {
+            color: #333;
+        }
+        h2 {
+            color: #007bff;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+            color: #555;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin-top: 15px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #result {
+            margin-top: 20px;
+            font-weight: bold;
+            color: #007bff;
+        }
+        .tab {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .tab button {
+            width: 48%;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+        .tab button.active {
+            background-color: #007bff;
+            color: white;
+        }
+        .section {
+            margin-top: 30px;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        .outgoing {
+            background-color: #ffcccc;
+        }
+        .incoming {
+            background-color: #ccffcc;
+        }
+    </style>
+    <script>
+        function convertCurrency(type) {
+            const amount = parseFloat(document.getElementById(type + "Amount").value);
+            const exchangeRate = 0.708;
+            let fee = 0;
+            let convertedAmount = 0;
+
+            if (type === "JODtoUSD") {
+                if (amount >= 1 && amount <= 199) {
+                    fee = 2;
+                } else if (amount >= 200 && amount <= 499) {
+                    fee = 3;
+                } else if (amount >= 500 && amount <= 1000) {
+                    fee = 3.5;
+                }
+                const totalAmount = amount + fee;
+                convertedAmount = totalAmount / exchangeRate;
+                document.getElementById("JODtoUSDResult").innerText = `المبلغ المحول: ${convertedAmount.toFixed(2)} USD`;
+            } else if (type === "USDtoJOD") {
+                convertedAmount = amount * exchangeRate;
+                if (convertedAmount >= 1 && convertedAmount <= 999) {
+                    fee = 3;
+                } else if (convertedAmount >= 1000) {
+                    fee = 4;
+                }
+                convertedAmount -= fee;
+                document.getElementById("USDtoJODResult").innerText = `المبلغ المحول: ${convertedAmount.toFixed(2)} JOD`;
+            }
+        }
+
+        function calculateReceivedAmount() {
+            const amount = parseFloat(document.getElementById("receivedAmount").value);
+            const adjustedAmount = amount - 1;
+            const finalAmount = adjustedAmount / 0.709;
+            document.getElementById("receivedResult").innerText = `المبلغ المحول: ${finalAmount.toFixed(2)} JOD`;
+        }
+
+        function switchTab(tab) {
+            document.getElementById("JODtoUSDTab").style.display = tab === "JODtoUSD" ? "block" : "none";
+            document.getElementById("USDtoJODTab").style.display = tab === "USDtoJOD" ? "block" : "none";
+            document.getElementById("JODtoUSDButton").classList.toggle("active", tab === "JODtoUSD");
+            document.getElementById("USDtoJODButton").classList.toggle("active", tab === "USDtoJOD");
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>محول العملات <i class="fas fa-exchange-alt"></i></h1>
+        
+        <div class="section outgoing">
+            <h2>قسم الصادر</h2>
+            <div class="tab">
+                <button id="JODtoUSDButton" class="active" onclick="switchTab('JODtoUSD')">دينار إلى دولار</button>
+                <button id="USDtoJODButton" onclick="switchTab('USDtoJOD')">دولار إلى دينار</button>
+            </div>
+            
+            <div id="JODtoUSDTab">
+                <label for="JODtoUSDAmount">المبلغ بالدينار الأردني:</label>
+                <input type="number" id="JODtoUSDAmount" name="JODtoUSDAmount" required>
+                <button onclick="convertCurrency('JODtoUSD')">تحويل <i class="fas fa-calculator"></i></button>
+                <p id="JODtoUSDResult"></p>
+            </div>
+            
+            <div id="USDtoJODTab" style="display: none;">
+                <label for="USDtoJODAmount">المبلغ بالدولار الأمريكي:</label>
+                <input type="number" id="USDtoJODAmount" name="USDtoJODAmount" required>
+                <button onclick="convertCurrency('USDtoJOD')">تحويل <i class="fas fa-calculator"></i></button>
+                <p id="USDtoJODResult"></p>
+            </div>
+        </div>
+
+        <div class="section incoming">
+            <h2>قسم الوارد</h2>
+            <label for="receivedAmount">المبلغ بالدينار الأردني:</label>
+            <input type="number" id="receivedAmount" name="receivedAmount" required>
+            <button onclick="calculateReceivedAmount()">تحويل <i class="fas fa-calculator"></i></button>
+            <p id="receivedResult"></p>
+        </div>
+    </div>
+</body>
+</html>
